@@ -16,7 +16,7 @@ interface IRefreshResponse {
 const mutex = new Mutex();
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/api/v1",
+  baseUrl: "https://coursemaster-backend-production.up.railway.app/api/v1",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as any).cmAuth.token;
@@ -93,7 +93,7 @@ const baseApi = createApi({
     "Payment",
     "Category",
     "Assignment",
-    "Quiz"
+    "Quiz",
   ],
   endpoints: () => ({}),
 });
