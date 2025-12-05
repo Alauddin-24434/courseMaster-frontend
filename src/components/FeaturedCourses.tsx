@@ -14,7 +14,7 @@ export function FeaturedCourses() {
 
   useEffect(() => setMounted(true), [])
 
-  const { data: courseData , isLoading: coursesLoading, isError: coursesError } = useGetAllCoursesQuery()
+  const { data: courseData , isLoading: coursesLoading, isError: coursesError } = useGetAllCoursesQuery({})
   const { data: catData, isLoading: catLoading, isError: catError } = useGetCategoriesQuery()
 
   if (!mounted) return null

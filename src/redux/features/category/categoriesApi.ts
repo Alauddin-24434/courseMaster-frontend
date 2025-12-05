@@ -4,7 +4,7 @@ import baseApi from "@/redux/baseApi/baseApi";
 const categoryApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     // Fetch all categories
-    getCategories: build.query<ICategory[], void>({
+    getCategories: build.query<any, void>({
       query: () => "/categories",
       providesTags: ["Category"],
     }),

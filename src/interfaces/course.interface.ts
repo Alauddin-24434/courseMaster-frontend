@@ -1,6 +1,6 @@
 // interfaces/course.interface.ts
 export interface ICourse {
-  _id:string
+  _id: string;
   title: string;
   description?: string;
   thumbnail: string;
@@ -12,4 +12,10 @@ export interface ICourse {
   whatYouWillLearn?: string[];
   courseIncludes?: string[];
   isPublished?: boolean;
+}
+
+// Wrapper type for API responses
+export interface ICourseResponse {
+  status: "success" | "error";
+  data: ICourse[];
 }

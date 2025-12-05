@@ -1,11 +1,10 @@
 // src/redux/features/course/courseApi.ts
 
-import { ICourse } from "@/interfaces/course.interface";
+import { ICourse, ICourseResponse } from "@/interfaces/course.interface";
 import baseApi from "@/redux/baseApi/baseApi";
 
 export const courseApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-
     // Create Course
     createCourse: build.mutation<ICourse, Partial<ICourse>>({
       query: (body) => ({
@@ -17,19 +16,38 @@ export const courseApi = baseApi.injectEndpoints({
     }),
 
     // Get All Courses
-    getAllCourses: build.query<ICourse[], void>({
-      query: () => "/courses",
+    getAllCourses: build.query<
+      ICourseResponse,
+      {
+        page?: number;
+        search?: string;
+        sortBy?: string;
+        category?: string;
+      } | void
+    >({
+      query: ({ page, search, sortBy, category } = {}) => {
+        const params = new URLSearchParams();
+        if (page) params.append("page", page.toString());
+        if (search) params.append("search", search);
+        if (sortBy) params.append("sortBy", sortBy);
+        if (category) params.append("category", category);
+
+        return `/courses?${params.toString()}`;
+      },
       providesTags: ["Course"],
     }),
 
     // Get Single Course
-    getCourseById: build.query<ICourse, string>({
+    getCourseById: build.query<any, string>({
       query: (id) => `/courses/${id}`,
       providesTags: ["Course"],
     }),
 
     // Update Course
-    updateCourse: build.mutation<ICourse, { id: string; data: Partial<ICourse> }>({
+    updateCourse: build.mutation<
+      ICourse,
+      { id: string; data: Partial<ICourse> }
+    >({
       query: ({ id, data }) => ({
         url: `/courses/${id}`,
         method: "PUT",
@@ -66,5 +84,5 @@ export const {
   useGetCourseByIdQuery,
   useUpdateCourseMutation,
   useDeleteCourseMutation,
-  useEnrollCourseMutation, 
+  useEnrollCourseMutation,
 } = courseApi;

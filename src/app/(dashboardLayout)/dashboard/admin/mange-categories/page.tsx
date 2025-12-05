@@ -69,7 +69,7 @@ console.log(categories)
             </tr>
           </thead>
           <tbody>
-            {categories?.data?.map((cat) => (
+            {categories?.data?.map((cat:ICategory) => (
               <tr key={cat._id} className="border-b">
                 <td className="p-2">{cat.name}</td>
        
