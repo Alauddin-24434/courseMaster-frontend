@@ -22,7 +22,7 @@ export function FeaturedCourses() {
   if (coursesError || catError) return <p className="text-center">Failed to load data.</p>
 
   const categories: string[] = ["All", ...(catData?.data?.map((cat: any) => cat.name) || [])]
-  const courses: any[] = courseData?.data || []
+  const courses: any= courseData?.data || []
 
   // ✅ Map course category IDs to names safely
   const coursesWithCategoryName: any[] = courses.map((course: any) => {

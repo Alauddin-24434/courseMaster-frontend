@@ -4,7 +4,6 @@ import baseApi from "@/redux/baseApi/baseApi";
 
 export const courseModuleApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
     // Add Module
     addModule: builder.mutation({
       query: (data) => ({
@@ -60,6 +59,10 @@ export const courseModuleApi = baseApi.injectEndpoints({
       query: (id) => `/courses/${id}`,
       providesTags: ["Course"],
     }),
+    getModulesByCourseId: builder.query({
+      query: (courseId: string) => `/modules/${courseId}`,
+      providesTags: ["Course"],
+    }),
   }),
 });
 
@@ -71,4 +74,5 @@ export const {
   useCreateAssignmentMutation,
   useCreateQuizMutation,
   useGetCourseQuery,
+  useGetModulesByCourseIdQuery
 } = courseModuleApi;

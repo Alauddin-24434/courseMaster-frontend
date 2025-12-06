@@ -22,17 +22,17 @@ export default function CoursesPage() {
 
   // Fetch courses using RTK Query
  const { data, isLoading } = useGetAllCoursesQuery({ page, search, sortBy, category });
-const courses = data?.data || [];
+const courses : any= data?.data || [];
   // Filter + search + sort (client-side example)
   const filteredCourses = courses
-    .filter(course => {
+    .filter((course: any) => {
       if (category && course.category !== category) return false;
       if (search && !course.title.toLowerCase().includes(search.toLowerCase()) &&
          !course.instructor.toLowerCase().includes(search.toLowerCase())
       ) return false;
       return true;
     })
-    .sort((a, b) => {
+    .sort((a:any, b:any) => {
       switch (sortBy) {
         case "price-low": return a.price - b.price;
         case "price-high": return b.price - a.price;

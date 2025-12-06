@@ -1,69 +1,75 @@
 "use client";
 
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from "@/redux/store";
-import { markLessonCompleted } from "@/redux/slices/coursesSlice";
+import toast from "react-hot-toast";
+import { useCompleteLessonMutation } from "@/redux/features/course/courseAPi";
+import { useGetModulesByCourseIdQuery } from "@/redux/features/module/courseModuleApi";
 
-export default function CoursePlayer({ course }: { course: any }) {
-  const dispatch = useDispatch<AppDispatch>();
-  const completedLessons = useSelector(
-    (state: RootState) => state.progress.completedLessons
-  );
+interface CoursePlayerProps {
+  courseId: string;
+ 
+}
 
+export default function CoursePlayer({courseId}: CoursePlayerProps) {
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
 
-  const module = course.modules[currentModuleIndex];
-  const lesson = module.lessons?.[currentLessonIndex];
+  const { data } = useGetModulesByCourseIdQuery(courseId);
+  const modulesData = data?.data?.modules || [];
 
-  // Next Lesson
-// handleNextLesson function
-const handleNextLesson = () => {
-  if (!module.lessons || module.lessons.length === 0) return;
+  const module = modulesData[currentModuleIndex];
+  const lesson = module?.lessons?.[currentLessonIndex];
 
-  // ✅ Mark current lesson as completed
-  if (!completedLessons.includes(lesson._id)) {
-    dispatch(markLessonCompleted(lesson._id));
-  }
+  const [completeLesson] = useCompleteLessonMutation();
 
-  // Move to next lesson/module
-  if (currentLessonIndex < module.lessons.length - 1) {
-    setCurrentLessonIndex(currentLessonIndex + 1);
-  } else if (currentModuleIndex < course.modules.length - 1) {
-    setCurrentModuleIndex(currentModuleIndex + 1);
-    setCurrentLessonIndex(0);
-  }
-};
+  // ✅ Mark Lesson Complete
+  const handleCompleteLesson = async () => {
+    if (!lesson) return;
+    try {
+      await completeLesson({
+        courseId,
+        moduleId: module._id,
+        lessonId: lesson._id,
+      }).unwrap();
 
+      toast.success("Lesson completed!");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.data?.message || "Failed to complete lesson");
+    }
+  };
 
-  // Previous Lesson
+  // ✅ Next Lesson
+  const handleNextLesson = () => {
+    if (!module?.lessons || module.lessons.length === 0) return;
+    handleCompleteLesson();
+
+    if (currentLessonIndex < module.lessons.length - 1) {
+      setCurrentLessonIndex(currentLessonIndex + 1);
+    } else if (currentModuleIndex < modulesData.length - 1) {
+      setCurrentModuleIndex(currentModuleIndex + 1);
+      setCurrentLessonIndex(0);
+    }
+  };
+
+  // ✅ Previous Lesson
   const handlePrevLesson = () => {
-    if (!module.lessons || module.lessons.length === 0) return;
+    if (!module?.lessons || module.lessons.length === 0) return;
     if (currentLessonIndex > 0) {
       setCurrentLessonIndex(currentLessonIndex - 1);
     } else if (currentModuleIndex > 0) {
-      const prevModule = course.modules[currentModuleIndex - 1];
+      const prevModule = modulesData[currentModuleIndex - 1];
       setCurrentModuleIndex(currentModuleIndex - 1);
       setCurrentLessonIndex(prevModule.lessons.length - 1);
     }
   };
 
-  // Progress Calculation
-  const totalLessons = course.modules.reduce(
-    (sum: number, mod: any) => sum + (mod.lessons?.length || 0),
-    0
-  );
-  const completedCount = completedLessons.length;
-  const progressPercentage =
-    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
-
   return (
     <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Side - Video & Lesson */}
+        {/* Left Side */}
         <div className="lg:col-span-2 space-y-6">
-          {module.lessons && module.lessons.length > 0 && lesson ? (
+          {lesson ? (
             <>
               <h2 className="text-2xl font-bold">
                 Module: {module.title} - Lesson: {lesson.title}
@@ -74,26 +80,21 @@ const handleNextLesson = () => {
                 <iframe
                   src={lesson.videoUrl}
                   title={lesson.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   className="w-full h-full rounded-lg shadow-lg border"
                 />
               </div>
 
-              {/* Lesson Info & Mark Complete */}
+              {/* Lesson Info */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-white rounded-lg shadow border">
-                <span className="font-medium">Duration: {lesson.duration} mins</span>
+                <span className="font-medium">
+                  Duration: {lesson.duration} mins
+                </span>
                 <button
-                  className={`px-4 py-2 rounded ${
-                    completedLessons.includes(lesson._id)
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-200 text-black hover:bg-gray-300"
-                  }`}
-                  onClick={() => dispatch(markLessonCompleted(lesson._id))}
+                  className="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300"
+                  onClick={handleCompleteLesson}
                 >
-                  {completedLessons.includes(lesson._id)
-                    ? "Completed"
-                    : "Mark as Complete"}
+                  Mark as Complete
                 </button>
               </div>
 
@@ -102,10 +103,12 @@ const handleNextLesson = () => {
                 <div className="w-full bg-gray-200 h-2 rounded mt-2">
                   <div
                     className="bg-green-500 h-2 rounded"
-                    style={{ width: `${progressPercentage}%` }}
+                    style={{ width: `${module.progressPercentage || 0}%` }}
                   ></div>
                 </div>
-                <p className="text-sm mt-1">{progressPercentage}% completed</p>
+                <p className="text-sm mt-1">
+                  {module.progressPercentage || 0}% completed
+                </p>
               </div>
 
               {/* Navigation */}
@@ -120,8 +123,8 @@ const handleNextLesson = () => {
                 <button
                   onClick={handleNextLesson}
                   disabled={
-                    currentModuleIndex === course.modules.length - 1 &&
-                    currentLessonIndex === module.lessons.length - 1
+                    currentModuleIndex === modulesData.length - 1 &&
+                    currentLessonIndex === (module?.lessons.length || 0) - 1
                   }
                   className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50 hover:bg-gray-300 transition"
                 >
@@ -136,23 +139,19 @@ const handleNextLesson = () => {
           )}
         </div>
 
-        {/* Right Side - Sticky Sidebar */}
+        {/* Right Sidebar */}
         <div className="lg:col-span-1">
           <div className="sticky top-20 max-h-[80vh] overflow-y-auto space-y-3">
-            {course.modules.map((mod: any, modIdx: number) => (
-              <div
-                key={mod._id}
-                className="bg-white rounded-lg shadow border p-3"
-              >
+            {modulesData.map((mod: any, modIdx: number) => (
+              <div key={mod._id} className="bg-white rounded-lg shadow border p-3">
                 <h3 className="font-semibold mb-2">{mod.title}</h3>
-                {mod.lessons && mod.lessons.length > 0 ? (
+                {mod.lessons?.length ? (
                   <div className="space-y-1">
                     {mod.lessons.map((les: any, lesIdx: number) => (
                       <div
                         key={les._id}
                         className={`p-2 rounded border cursor-pointer flex justify-between items-center ${
-                          currentModuleIndex === modIdx &&
-                          currentLessonIndex === lesIdx
+                          currentModuleIndex === modIdx && currentLessonIndex === lesIdx
                             ? "bg-primary text-white border-primary"
                             : "hover:bg-gray-100"
                         }`}
@@ -173,6 +172,18 @@ const handleNextLesson = () => {
                     No lessons
                   </div>
                 )}
+                {/* Module Progress */}
+                <div className="mt-2">
+                  <div className="w-full bg-gray-200 h-2 rounded">
+                    <div
+                      className="bg-green-500 h-2 rounded"
+                      style={{ width: `${mod.progressPercentage || 0}%` }}
+                    />
+                  </div>
+                  <p className="text-xs mt-1">
+                    {mod.progressPercentage || 0}% completed
+                  </p>
+                </div>
               </div>
             ))}
           </div>

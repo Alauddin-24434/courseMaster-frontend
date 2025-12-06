@@ -28,10 +28,9 @@ const commonItems = [{ title: "Settings", url: "#", icon: Settings }];
 // -------- MENU BY ROLE --------
 export const studentItems = [
   { title: "Home", url: "/dashboard", icon: Home },
-  { title: "My Courses", url: "/student/my-courses", icon: Inbox },
-  { title: "Progress", url: "/student/progress", icon: Calendar },
-  { title: "Assignments", url: "/student/assignments", icon: FileText },
-  { title: "Quizzes", url: "/student/quizzes", icon: HelpCircle },
+  { title: "My Courses", url: "/dashboard/student/my-courses", icon: Inbox },
+  
+
 ];
 
 export const adminItems = [

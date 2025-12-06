@@ -87,7 +87,7 @@ export default function CourseCreateForm({
       // Convert previewVideo URL to embed URL
       const embedVideoUrl = convertToEmbedUrl(data.previewVideo);
 
-      const payload = {
+      const payload : any= {
         title: data.title,
         description: data.description,
         thumbnail: thumbnailUrl,

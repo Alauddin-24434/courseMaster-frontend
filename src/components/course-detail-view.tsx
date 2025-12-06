@@ -41,7 +41,10 @@ export function CourseDetailView({ courseId }: { courseId: string }) {
       </div>
     );
   }
-const isEnrolled = user && (course?.enrollCounts || []).includes(user._id);
+const isEnrolled = user && course?.students?.some(
+  (student: any) => student.studentId.toString() == user._id
+);
+
 
   const handleAddToCart = () => {
     dispatch(

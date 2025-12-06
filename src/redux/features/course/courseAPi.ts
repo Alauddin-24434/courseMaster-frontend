@@ -17,7 +17,7 @@ export const courseApi = baseApi.injectEndpoints({
 
     // Get All Courses
     getAllCourses: build.query<
-      ICourseResponse,
+      any,
       {
         page?: number;
         search?: string;
@@ -64,7 +64,11 @@ export const courseApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Course"],
     }),
-
+  // ⬇⬇⬇ *** GET MY COURSES (Student enrolled courses) ***
+    getMyCourses: build.query<ICourseResponse, void>({
+      query: () => `/courses/my-courses`,
+      providesTags: ["Course"],
+    }),
     // Enroll in Course
     enrollCourse: build.mutation<{ message: string; course: ICourse }, string>({
       query: (courseId) => ({
@@ -73,6 +77,16 @@ export const courseApi = baseApi.injectEndpoints({
         // headers: Authorization header can be added globally in baseApi
       }),
       invalidatesTags: ["Course"], // To refresh course info after enrollment
+    }),
+     // Complete Lesson
+    completeLesson: build.mutation<{ success: boolean; progress: number }, { courseId: string; moduleId: string; lessonId: string }>({
+      query: ({ courseId, moduleId, lessonId }) => ({
+        url: "/courses/complete-lesson",
+        method: "POST",
+        body: { courseId, moduleId, lessonId },
+      }),
+      // ✅ Automatically invalidates cache if needed
+      invalidatesTags: ["Course"],
     }),
   }),
 });
@@ -85,4 +99,6 @@ export const {
   useUpdateCourseMutation,
   useDeleteCourseMutation,
   useEnrollCourseMutation,
+  useGetMyCoursesQuery,
+  useCompleteLessonMutation
 } = courseApi;
