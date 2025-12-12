@@ -11,7 +11,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-primary  rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold">C</span>
               </div>
               <span className="font-serif font-bold">CourseMaster</span>

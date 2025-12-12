@@ -1,60 +1,28 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { Star, Users, Clock, ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
+
 import { RootState } from "@/redux/store";
 
-import { addToCart } from "@/redux/slices/cartSlice";
 import {
   useEnrollCourseMutation,
-  useGetCourseByIdQuery,
+  
 } from "@/redux/features/course/courseAPi";
-import { useRouter } from "next/navigation";
 
-export function CourseDetailView({ courseId }: { courseId: string }) {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
+export function CourseDetailView({ course }: { course: any }) {
+  
   const { isAuthenticated, user } = useSelector((state: RootState) => state.cmAuth);
  const [enrollCourse, { isLoading: enrollLoading }] = useEnrollCourseMutation();
 
-  const router = useRouter();
-  // RTK Query
-  const { data, isLoading, isError } = useGetCourseByIdQuery(courseId);
-  const course = data?.data;
- // Check if user already enrolled
 
 
-  if (isLoading) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-        <p className="text-lg text-muted-foreground">Loading course...</p>
-      </div>
-    );
-  }
-
-  if (isError || !course) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-12 text-center">
-        <p className="text-lg text-muted-foreground">Course not found</p>
-      </div>
-    );
-  }
 const isEnrolled = user && course?.students?.some(
   (student: any) => student.studentId.toString() == user._id
 );
 
 
-  const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        courseId: course._id,
-        title: course.title,
-        price: course.price,
-      })
-    );
-  };
 
   const handleEnroll = async () => {
     try {

@@ -12,17 +12,68 @@
     "title": "Learn Anything, Anytime",
     "subtitle": "Access thousands of courses from expert instructors worldwide",
     "cta": "Explore Courses",
-    "featured": "Featured Courses"
+    "featured": "Featured Courses",
+    "featured_desc":"Learn from the world's best teachers",
+    "view_all":"View All"
+
   },
+  "hero": {
+    "featured": "Featured Courses",
+    "title": "Learn Anything, Anytime",
+    "subtitle": "Access thousands of courses from expert instructors worldwide",
+    "cta": "Explore Courses",
+    "watch_demo": "Watch Demo",
+    "stats": {
+      "courses": "Courses",
+      "students": "Students",
+      "instructors": "Instructors"
+    },
+    "floating_cards": {
+      "card1": {
+        "title": "Expert Instructors",
+        "subtitle": "Learn from best"
+      },
+      "card2": {
+        "title": "Lifetime Access",
+        "subtitle": "Learn forever"
+      },
+      "card3": {
+        "title": "4.9/5 Rating",
+        "subtitle": "Student rated"
+      }
+    },
+    "scroll_indicator": "Scroll to explore"
+  },
+
   "courses": {
     "search": "Search courses...",
     "filter": "Filter",
-    "sort": "Sort By",
-    "category": "Category",
+   
     "price": "Price",
     "all": "All Courses",
     "enrolled": "Enrolled",
-    "enroll": "Enroll Now"
+    "enroll": "Enroll Now",
+    "description": "Discover and enroll in thousands of courses",
+    "search_placeholder": "Search by title or instructor",
+    "sort": {
+      "newest": "Newest",
+      "priceLow": "Price: Low to High",
+      "priceHigh": "Price: High to Low"
+    },
+    "category": {
+      "all": "All Categories",
+      "web": "Web Development",
+      "mobile": "Mobile Development",
+      "design": "Design",
+      "data": "Data Science",
+      "business": "Business"
+    },
+    "loading": "Loading courses...",
+    "no_results": "No courses found."
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next"
   },
   "auth": {
     "welcome_back": "Welcome back",

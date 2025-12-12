@@ -145,7 +145,7 @@ export default function CourseList({ onEdit, onAddLesson }: Props) {
           </tr>
         </thead>
         <tbody>
-          {courses?.data?.map((course: any) => (
+          {courses?.data?.courses?.map((course: any) => (
             <React.Fragment key={course._id}>
               <tr className="border-b border-border">
                 <td className="px-4 py-3 font-medium">{course.title}</td>

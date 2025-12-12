@@ -18,10 +18,17 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    dispatch(logout()); // ✅ clear user from state
-    // Optional: redirect to home
+    dispatch(logout());
     window.location.href = "/";
   };
+
+  console.log(i18n)
+const toggleLanguage = () => {
+  const newLang = i18n.language === 'en' ? 'bn' : 'en';
+  i18n.changeLanguage(newLang); // updates i18n
+  localStorage.setItem('i18nextLng', newLang); // persist
+  document.documentElement.lang = newLang; // update html lang dynamically
+};
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-border">
@@ -61,28 +68,30 @@ export function Header() {
                 >
                   {t("nav.dashboard")}
                 </Link>
-                {user?.role === "admin" && (
-                  <Link
-                    href="/admin"
-                    className="text-sm font-medium hover:text-primary transition"
-                  >
-                    {t("nav.admin")}
-                  </Link>
-                )}
+               
               </>
             )}
           </nav>
 
           {/* Right Section */}
           <div className="flex items-center gap-4">
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="p-2 border rounded-lg flex items-center gap-1 text-sm hover:bg-muted transition"
+            >
+              <Globe className="w-4 h-4" />
+              {i18n.language === "en" ? "বাংলা" : "EN"}
+            </button>
+
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
                 <span className="hidden sm:inline text-sm text-muted-foreground">
                   {user?.name}
                 </span>
                 <button
-                  onClick={handleLogout} // ✅ use button instead of Link
-                  className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg text-sm font-medium hover:opacity-90 transition"
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-destructive text-white text-destructive-foreground rounded-lg text-sm font-medium hover:opacity-90 transition"
                 >
                   {t("nav.logout")}
                 </button>

@@ -15,19 +15,13 @@ export const courseApi = baseApi.injectEndpoints({
       invalidatesTags: ["Course"],
     }),
 
-    // Get All Courses
-    getAllCourses: build.query<
-      any,
-      {
-        page?: number;
-        search?: string;
-        sortBy?: string;
-        category?: string;
-      } | void
-    >({
-      query: ({ page, search, sortBy, category } = {}) => {
+   getAllCourses: build.query<
+      { data: { courses: ICourse[]; total: number; page: number; totalPages: number } },
+      { page?: number; limit?: number; search?: string; category?: string; sortBy?: string } | void >({
+      query: ({ page, limit, search, category, sortBy } = {}) => {
         const params = new URLSearchParams();
         if (page) params.append("page", page.toString());
+        if (limit) params.append("limit", limit.toString());
         if (search) params.append("search", search);
         if (sortBy) params.append("sortBy", sortBy);
         if (category) params.append("category", category);
@@ -36,7 +30,6 @@ export const courseApi = baseApi.injectEndpoints({
       },
       providesTags: ["Course"],
     }),
-
     // Get Single Course
     getCourseById: build.query<any, string>({
       query: (id) => `/courses/${id}`,
