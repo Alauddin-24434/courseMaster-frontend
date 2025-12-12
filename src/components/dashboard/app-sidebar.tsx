@@ -2,6 +2,7 @@
 
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
+import { usePathname } from "next/navigation";
 
 import {
   BarChart,
@@ -52,6 +53,7 @@ export function AppSidebar() {
   const { user } = useSelector((state: RootState) => state.cmAuth);
   const role = user?.role || "student";
   const dispatch = useDispatch();
+  const pathname = usePathname(); // current path
 
   const getMenuByRole = () => {
     switch (role) {
@@ -66,68 +68,77 @@ export function AppSidebar() {
 
   const handleLogout = () => {
     dispatch(logout());
-
     window.location.href = "/";
   };
 
   return (
-   <Sidebar>
-  <SidebarContent className="flex flex-col h-full justify-between">
-    {/* PROFILE + MENU */}
-    <div>
-      {/* PROFILE HEADER */}
-      <div className="p-4 border-b flex items-center gap-3">
+    <Sidebar>
+      <SidebarContent className="flex flex-col h-full justify-between">
+        {/* PROFILE + MENU */}
         <div>
-          <p className="font-semibold text-sm">{user?.name || "User Name"}</p>
-          <p className="text-xs text-gray-500 capitalize">{role}</p>
+          {/* PROFILE HEADER */}
+          <div className="p-4 border-b flex items-center gap-3">
+            <div>
+              <p className="font-semibold text-sm">{user?.name || "User Name"}</p>
+              <p className="text-xs text-gray-500 capitalize">{role}</p>
+            </div>
+          </div>
+
+          {/* Sidebar Group */}
+          <SidebarGroup>
+            <SidebarGroupLabel>
+              {role === "admin"
+                ? "Admin Panel"
+                : role === "instructor"
+                ? "Instructor Panel"
+                : "Student Panel"}
+            </SidebarGroupLabel>
+
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {menuItems.map((item) => {
+                  const isActive = pathname === item.url;
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <a
+                          href={item.url}
+                          className={`flex items-center gap-2 px-3 py-2 rounded transition
+                          ${
+                            isActive
+                              ? "bg-primary text-white"
+                              : "hover:bg-gray-100 text-gray-700"
+                          }`}
+                        >
+                          <item.icon className={isActive ? "text-white" : ""} />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         </div>
-      </div>
 
-      {/* Sidebar Group */}
-      <SidebarGroup>
-        <SidebarGroupLabel>
-          {role === "admin"
-            ? "Admin Panel"
-            : role === "instructor"
-            ? "Instructor Panel"
-            : "Student Panel"}
-        </SidebarGroupLabel>
-
-        <SidebarGroupContent>
+        {/* Logout Button at Bottom */}
+        <div className="p-4">
           <SidebarMenu>
-            {menuItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild>
-                  <a href={item.url} className="flex items-center gap-2">
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center w-full gap-2 bg-red-500 text-white px-3 py-2 rounded cursor-pointer hover:bg-red-600 transition"
+                >
+                  <LogOut />
+                  <span>Logout</span>
+                </button>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
-    </div>
-
-    {/* Logout Button at Bottom */}
-    <div className="p-4">
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full gap-2 bg-red-500 text-white px-3 py-2 rounded cursor-pointer hover:bg-red-600 transition"
-            >
-              <LogOut />
-              <span>Logout</span>
-            </button>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    </div>
-  </SidebarContent>
-</Sidebar>
-
+        </div>
+      </SidebarContent>
+    </Sidebar>
   );
 }
